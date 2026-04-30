@@ -21,6 +21,20 @@
 
     programs.zsh = {
         enable = true;
+        enableCompletion = true;
+        autosuggestion.enable = true;
+        syntaxHighlighting.enable = true;
+        shellAliases = {
+            ls = "eza";
+            ll = "eza -la --git";
+        };
+    };
+
+    programs.neovim = {
+        enable = true;
+        defaultEditor = true;
+        viAlias = true;
+        vimAlias = true;
     };
 
     programs.direnv = {
