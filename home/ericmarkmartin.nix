@@ -4,7 +4,7 @@
     home.stateVersion = "25.11";
 
     home.packages = with pkgs; [
-        ripgrep fd bat eza fzf jq neovim gh starship
+        ripgrep fd bat eza fzf jq gh 
     ];
 
     programs.home-manager.enable = true;
