@@ -27,4 +27,14 @@
 		enable = true;
 		nix-direnv.enable = true;
 	};
+
+	programs.ssh = {
+		enable = true;
+		matchBlocks = {
+			"github.com" = {
+				identityFile = "~/.ssh/id_github";
+				extraOptions.AddKeysToAgent = "yes";
+			};
+		};
+	};
 }
