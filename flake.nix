@@ -16,6 +16,7 @@
             system = "x86_64-linux";
             modules = [
                 nixos-wsl.nixosModules.default
+                ./modules/common.nix
                 ./modules/users/ericmarkmartin.nix
                 ./hosts/wsl
                 home-manager.nixosModules.home-manager
