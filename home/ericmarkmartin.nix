@@ -1,4 +1,12 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+let
+    zimfwGit = pkgs.fetchFromGitHub {
+        owner = "zimfw";
+        repo = "git";
+        rev = "fff448c0b89a4885f4ace90e2f37893a078b0c8a";
+        hash = "sha256-ojcv6nCOcv+2bbOZxcWhiefQ6mIWovYV57K8V6iyO5M=";
+    };
+in {
     home.username = "ericmarkmartin";
     home.homeDirectory = "/home/ericmarkmartin";
     home.stateVersion = "25.11";
@@ -30,6 +38,12 @@
             ls = "eza";
             ll = "eza -la --git";
         };
+        initContent = ''
+            # zimfw/git aliases (G-prefix: Gws, Gb, Gc, ...)
+            fpath+=(${zimfwGit}/functions)
+            for f in ${zimfwGit}/functions/*(N); do autoload -Uz ''${f:t}; done
+            source ${zimfwGit}/init.zsh
+        '';
     };
 
     programs.nixvim = {
@@ -74,6 +88,15 @@
                     clangd.enable = true;  # C — cpython interpreter
                     ty.enable = true;      # Python type checker (Astral, alpha)
                     ruff.enable = true;    # Python linter/formatter
+                    nixd = {
+                        enable = true;
+                        settings.nixd.formatting.command = [ "nixfmt" ];
+                    };
+                };
+                keymaps.lspBuf = {
+                    gd = "definition";
+                    gD = "declaration";
+                    gy = "type_definition";
                 };
             };
 
@@ -111,6 +134,22 @@
                 action = "<cmd>Oil<cr>";
                 options.desc = "Open parent directory";
             }
+            {
+                mode = "n";
+                key = "<leader>F";
+                action.__raw = "function() vim.lsp.buf.format({ async = true }) end";
+                options.desc = "Format buffer (LSP)";
+            }
+            {
+                mode = "i";
+                key = "jk";
+                action = "<Esc>";
+                options.desc = "Leave insert mode";
+            }
+        ];
+
+        extraPackages = with pkgs; [
+            nixfmt  # used by nixd for `:lua vim.lsp.buf.format()`
         ];
     };
 
@@ -151,25 +190,24 @@
         enable = true;
         settings = {
             add_newline = false;
-            format = "$directory$git_branch$git_status$character";
+            format = "$directory$git_branch$git_status$python$cmd_duration$line_break$character";
 
             character = {
-        	success_symbol = "[>](bold green)";
-        	error_symbol = "[>](bold red)";
+                success_symbol = "[❯](bold green)";
+                error_symbol = "[❯](bold red)";
             };
 
             directory = {
-        	truncation_length = 3;
-        	truncate_to_repo = true;
+                truncation_length = 3;
+                truncate_to_repo = true;
             };
 
             git_branch = {
-        	symbol = "";
-        	style = "bold purple";
+                style = "bold purple";
             };
 
             git_status = {
-        	style = "bold yellow";
+                style = "bold yellow";
             };
 
             aws.disabled = true;
