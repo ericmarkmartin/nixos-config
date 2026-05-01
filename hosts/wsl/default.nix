@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
 	imports = [
 		../../modules/users/ericmarkmartin.nix
 	];
@@ -21,4 +21,8 @@
 	programs.nix-ld.enable = true;
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+        nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+            "claude-code"
+        ];
 }
