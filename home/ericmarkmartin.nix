@@ -4,7 +4,9 @@
     home.stateVersion = "25.11";
 
     home.packages = with pkgs; [
-        ripgrep fd bat eza fzf jq gh 
+        ripgrep fd bat eza fzf jq gh claude-code
+        bear  # generates compile_commands.json for cpython: `bear -- make`
+        uv    # Python package/venv manager
     ];
 
     programs.home-manager.enable = true;
@@ -30,17 +32,94 @@
         };
     };
 
-    programs.neovim = {
+    programs.nixvim = {
         enable = true;
         defaultEditor = true;
         viAlias = true;
         vimAlias = true;
+
+        globals.mapleader = " ";
+
+        opts = {
+            number = true;
+            relativenumber = true;
+            expandtab = true;
+            shiftwidth = 4;
+            tabstop = 4;
+            softtabstop = 4;
+            smartindent = true;
+            wrap = false;
+            undofile = true;
+            ignorecase = true;
+            smartcase = true;
+            termguicolors = true;
+            scrolloff = 8;
+            signcolumn = "yes";
+            updatetime = 50;
+            cursorline = true;
+        };
+
+        plugins = {
+            treesitter = {
+                enable = true;
+                settings = {
+                    highlight.enable = true;
+                    indent.enable = true;
+                };
+            };
+
+            lsp = {
+                enable = true;
+                servers = {
+                    clangd.enable = true;  # C — cpython interpreter
+                    ty.enable = true;      # Python type checker (Astral, alpha)
+                    ruff.enable = true;    # Python linter/formatter
+                };
+            };
+
+            blink-cmp = {
+                enable = true;
+                settings = {
+                    keymap.preset = "default";
+                    completion.documentation.auto_show = true;
+                    sources.default = [ "lsp" "path" "buffer" ];
+                };
+            };
+
+            telescope = {
+                enable = true;
+                keymaps = {
+                    "<leader>ff" = "find_files";
+                    "<leader>fg" = "live_grep";
+                    "<leader>fb" = "buffers";
+                    "<leader>fh" = "help_tags";
+                    "<leader>fs" = "lsp_document_symbols";
+                    "<leader>fS" = "lsp_dynamic_workspace_symbols";
+                };
+            };
+
+            oil.enable = true;
+            gitsigns.enable = true;
+            which-key.enable = true;
+            web-devicons.enable = true;  # file icons for telescope
+        };
+
+        keymaps = [
+            {
+                mode = "n";
+                key = "-";
+                action = "<cmd>Oil<cr>";
+                options.desc = "Open parent directory";
+            }
+        ];
     };
 
     programs.direnv = {
         enable = true;
         nix-direnv.enable = true;
     };
+
+    services.ssh-agent.enable = true;
 
     programs.ssh = {
         enable = true;
