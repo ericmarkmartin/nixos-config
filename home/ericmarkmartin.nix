@@ -111,6 +111,7 @@ in {
             gitsigns-nvim
             which-key-nvim
             nvim-web-devicons
+            catppuccin-nvim
         ];
 
         # `builtins.readFile` slurps the file at evaluation time, so its contents

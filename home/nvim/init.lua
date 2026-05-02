@@ -25,6 +25,32 @@ opt.cursorline     = true
 -- install would pick up the right font without extra config.
 opt.guifont = "Iosevka Term SS10:h11"
 
+-- Catppuccin colorscheme. Each flavour registers as its own colorscheme,
+-- so live-switch with: `:colorscheme catppuccin-{latte,frappe,macchiato,mocha}`.
+-- `integrations` lists plugins where catppuccin ships dedicated highlight
+-- styling beyond the base highlight groups.
+require("catppuccin").setup({
+    flavour     = "macchiato",  -- latte | frappe | macchiato | mocha
+    term_colors = true,     -- color :terminal too
+    integrations = {
+        treesitter = true,
+        native_lsp = {
+            enabled = true,
+            underlines = {
+                errors      = { "underline" },
+                warnings    = { "underline" },
+                hints       = { "underline" },
+                information = { "underline" },
+            },
+        },
+        blink_cmp = true,
+        telescope = { enabled = true },
+        gitsigns  = true,
+        which_key = true,
+    },
+})
+vim.cmd.colorscheme("catppuccin-macchiato")
+
 vim.keymap.set("n", "-",  "<cmd>Oil<cr>", { desc = "Open parent directory" })
 vim.keymap.set("i", "jk", "<Esc>",        { desc = "Leave insert mode" })
 vim.keymap.set("n", "<leader>F", function()
