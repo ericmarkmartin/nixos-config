@@ -12,7 +12,7 @@ in {
     home.stateVersion = "25.11";
 
     home.packages = with pkgs; [
-        ripgrep fd bat eza fzf jq gh claude-code
+        ripgrep fd bat eza fzf jq gh claude-code dysk
         bear     # generates compile_commands.json for cpython: `bear -- make`
         gnumake  # `make` — needed for cpython's build
         uv       # Python package/venv manager
