@@ -60,6 +60,16 @@ require("blink.cmp").setup({
     sources    = { default = { "lsp", "path", "buffer" } },
 })
 
+-- Diagnostic rendering: virtual_text puts the message at end-of-line, to
+-- the right of the offending code (the `prefix` glyph separates it from
+-- code visually). `source = "if_many"` shows the source name (ruff/ty/...)
+-- only when more than one client is attached.
+vim.diagnostic.config({
+    virtual_text  = { spacing = 4, prefix = "●", source = "if_many" },
+    severity_sort = true,
+    underline     = true,
+})
+
 -- LSP buffer-local keymaps applied when any client attaches.
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
