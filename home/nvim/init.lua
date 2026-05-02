@@ -67,7 +67,37 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
-require("oil").setup()
+-- oil: hide gitignored files. Cache the ignored set per oil bufnr so we
+-- only fork `git ls-files` once per render (not once per filename), and
+-- invalidate the cache when oil refreshes the buffer.
+local oil_ignored = {}
+require("oil").setup({
+    view_options = {
+        show_hidden = false,
+        is_hidden_file = function(name, bufnr)
+            if vim.startswith(name, ".") then return true end
+            if not oil_ignored[bufnr] then
+                local dir = require("oil").get_current_dir(bufnr)
+                if not dir then oil_ignored[bufnr] = {}; return false end
+                local lines = vim.fn.systemlist({
+                    "git", "-C", dir, "ls-files",
+                    "--others", "--ignored", "--exclude-standard", "--directory",
+                })
+                local set = {}
+                for _, l in ipairs(lines) do
+                    set[(l:gsub("/$", ""))] = true
+                end
+                oil_ignored[bufnr] = set
+            end
+            return oil_ignored[bufnr][name] or false
+        end,
+    },
+})
+vim.api.nvim_create_autocmd({ "BufWipeout", "BufReadCmd" }, {
+    pattern = "oil://*",
+    callback = function(args) oil_ignored[args.buf] = nil end,
+})
+
 require("gitsigns").setup()
 require("which-key").setup()
 require("nvim-web-devicons").setup()
