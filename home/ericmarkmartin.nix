@@ -112,6 +112,7 @@ in {
             which-key-nvim
             nvim-web-devicons
             catppuccin-nvim
+            neogit
         ];
 
         # `builtins.readFile` slurps the file at evaluation time, so its contents

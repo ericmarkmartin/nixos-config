@@ -69,6 +69,9 @@ vim.keymap.set("n", "<leader>wl", "<C-w>l",          { desc = "Window right" })
 -- Toggle to alternate buffer (`<C-^>`) — the last-visited buffer.
 vim.keymap.set("n", "<leader><Tab>", "<C-^>", { desc = "Alternate buffer" })
 
+-- Neogit (git status UI, magit-inspired).
+vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "Neogit status" })
+
 -- Treesitter: nvim-treesitter v1.0 dropped the old `configs.setup`. The
 -- modern way is to start it per-buffer via FileType. Grammars from
 -- `withPlugins` live on the rtp, so `vim.treesitter.start` finds them.
@@ -113,6 +116,7 @@ vim.api.nvim_create_autocmd({ "BufWipeout", "BufReadCmd" }, {
 require("gitsigns").setup()
 require("which-key").setup()
 require("nvim-web-devicons").setup()
+require("neogit").setup()
 
 local tb = require("telescope.builtin")
 vim.keymap.set("n", "<leader>ff", tb.find_files,                    { desc = "Find files" })
