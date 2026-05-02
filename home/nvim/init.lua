@@ -57,6 +57,18 @@ vim.keymap.set("n", "<leader>F", function()
     vim.lsp.buf.format({ async = true })
 end, { desc = "Format buffer (LSP)" })
 
+-- Window splits + navigation (spacemacs-style leader-w prefix).
+-- These wrap the built-in `<C-w>*` mappings so they show up in which-key.
+vim.keymap.set("n", "<leader>w/", "<cmd>vsplit<cr>", { desc = "Split side-by-side" })
+vim.keymap.set("n", "<leader>w-", "<cmd>split<cr>",  { desc = "Split top-over-bottom" })
+vim.keymap.set("n", "<leader>wh", "<C-w>h",          { desc = "Window left" })
+vim.keymap.set("n", "<leader>wj", "<C-w>j",          { desc = "Window down" })
+vim.keymap.set("n", "<leader>wk", "<C-w>k",          { desc = "Window up" })
+vim.keymap.set("n", "<leader>wl", "<C-w>l",          { desc = "Window right" })
+
+-- Toggle to alternate buffer (`<C-^>`) — the last-visited buffer.
+vim.keymap.set("n", "<leader><Tab>", "<C-^>", { desc = "Alternate buffer" })
+
 -- Treesitter: nvim-treesitter v1.0 dropped the old `configs.setup`. The
 -- modern way is to start it per-buffer via FileType. Grammars from
 -- `withPlugins` live on the rtp, so `vim.treesitter.start` finds them.
