@@ -19,6 +19,15 @@ in {
         jujutsu  # git-compatible VCS; `jj` binary
     ];
 
+    # `home.sessionVariables` writes to ~/.profile (and home-manager's
+    # zsh env-loading shim), so login shells pick them up. New shells
+    # opened *now* in this session won't have them until you re-login or
+    # `source ~/.zshenv` — easiest is just opening a fresh WT tab.
+    home.sessionVariables = {
+        EDITOR = "nvim";
+        PAGER  = "bat";
+    };
+
     programs.home-manager.enable = true;
 
     programs.git = {
