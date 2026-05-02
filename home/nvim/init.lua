@@ -19,6 +19,12 @@ opt.signcolumn     = "yes"
 opt.updatetime     = 50
 opt.cursorline     = true
 
+-- guifont applies only to GUI nvim frontends (neovide, nvim-qt, fvim, …).
+-- In terminal nvim — including Windows Terminal — this is a no-op; the
+-- terminal's font is what renders. Setting it here means a future `neovide`
+-- install would pick up the right font without extra config.
+opt.guifont = "Iosevka Term SS10:h11"
+
 vim.keymap.set("n", "-",  "<cmd>Oil<cr>", { desc = "Open parent directory" })
 vim.keymap.set("i", "jk", "<Esc>",        { desc = "Leave insert mode" })
 vim.keymap.set("n", "<leader>F", function()
