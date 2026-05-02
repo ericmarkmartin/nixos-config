@@ -16,7 +16,6 @@ in {
         bear     # generates compile_commands.json for cpython: `bear -- make`
         gnumake  # `make` — needed for cpython's build
         uv       # Python package/venv manager
-        jujutsu  # git-compatible VCS; `jj` binary
     ];
 
     # `home.sessionVariables` writes to ~/.profile (and home-manager's
@@ -31,6 +30,20 @@ in {
     programs.home-manager.enable = true;
 
     programs.git = {
+        enable = true;
+        settings = {
+            user = {
+                name = "Eric Mark Martin";
+                email = "eric@emm.dev";
+            };
+        };
+    };
+
+    # `programs.jujutsu.enable = true` already installs the `jj` binary, so
+    # it's not in `home.packages` anymore. `settings` writes
+    # ~/.config/jj/config.toml — jj reads this directly rather than relying
+    # on git config fallback (which it picks up inconsistently).
+    programs.jujutsu = {
         enable = true;
         settings = {
             user = {
