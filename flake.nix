@@ -7,11 +7,9 @@
         nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
         home-manager.url = "github:nix-community/home-manager";
         home-manager.inputs.nixpkgs.follows = "nixpkgs";
-        nixvim.url = "github:nix-community/nixvim";
-        nixvim.inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    outputs = { self, nixpkgs, nixos-wsl, home-manager, nixvim, ... }: {
+    outputs = { self, nixpkgs, nixos-wsl, home-manager, ... }: {
         nixosConfigurations.wsl = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
             modules = [
@@ -23,7 +21,6 @@
                 {
                     home-manager.useGlobalPkgs = true;
                     home-manager.useUserPackages = true;
-                    home-manager.sharedModules = [ nixvim.homeModules.nixvim ];
                     home-manager.users.ericmarkmartin = import ./home/ericmarkmartin.nix;
                 }
             ];

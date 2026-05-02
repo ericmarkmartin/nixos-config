@@ -46,111 +46,53 @@ in {
         '';
     };
 
-    programs.nixvim = {
+    programs.neovim = {
         enable = true;
         defaultEditor = true;
         viAlias = true;
         vimAlias = true;
 
-        globals.mapleader = " ";
+        # Opt into the new defaults early (in 26.05 these flip to false).
+        # We don't need ruby or the python3 provider inside nvim itself —
+        # python tooling reaches us via ruff/ty on extraPackages, not via
+        # nvim's :py3 bridge.
+        withRuby = false;
+        withPython3 = false;
 
-        opts = {
-            number = true;
-            relativenumber = true;
-            expandtab = true;
-            shiftwidth = 4;
-            tabstop = 4;
-            softtabstop = 4;
-            smartindent = true;
-            wrap = false;
-            undofile = true;
-            ignorecase = true;
-            smartcase = true;
-            termguicolors = true;
-            scrolloff = 8;
-            signcolumn = "yes";
-            updatetime = 50;
-            cursorline = true;
-        };
-
-        plugins = {
-            treesitter = {
-                enable = true;
-                settings = {
-                    highlight.enable = true;
-                    indent.enable = true;
-                };
-            };
-
-            lsp = {
-                enable = true;
-                servers = {
-                    clangd.enable = true;  # C — cpython interpreter
-                    ty.enable = true;      # Python type checker (Astral, alpha)
-                    ruff.enable = true;    # Python linter/formatter
-                    nixd = {
-                        enable = true;
-                        settings.nixd.formatting.command = [ "nixfmt" ];
-                    };
-                };
-                keymaps.lspBuf = {
-                    gd = "definition";
-                    gD = "declaration";
-                    gy = "type_definition";
-                };
-            };
-
-            blink-cmp = {
-                enable = true;
-                settings = {
-                    keymap.preset = "default";
-                    completion.documentation.auto_show = true;
-                    sources.default = [ "lsp" "path" "buffer" ];
-                };
-            };
-
-            telescope = {
-                enable = true;
-                keymaps = {
-                    "<leader>ff" = "find_files";
-                    "<leader>fg" = "live_grep";
-                    "<leader>fb" = "buffers";
-                    "<leader>fh" = "help_tags";
-                    "<leader>fs" = "lsp_document_symbols";
-                    "<leader>fS" = "lsp_dynamic_workspace_symbols";
-                };
-            };
-
-            oil.enable = true;
-            gitsigns.enable = true;
-            which-key.enable = true;
-            web-devicons.enable = true;  # file icons for telescope
-        };
-
-        keymaps = [
-            {
-                mode = "n";
-                key = "-";
-                action = "<cmd>Oil<cr>";
-                options.desc = "Open parent directory";
-            }
-            {
-                mode = "n";
-                key = "<leader>F";
-                action.__raw = "function() vim.lsp.buf.format({ async = true }) end";
-                options.desc = "Format buffer (LSP)";
-            }
-            {
-                mode = "i";
-                key = "jk";
-                action = "<Esc>";
-                options.desc = "Leave insert mode";
-            }
-        ];
-
+        # LSP servers + tools placed on neovim's wrapper PATH (not your shell's).
+        # Same wrapper-PATH trick nixvim was doing under the hood.
+        # `clang-tools` is the package that ships the `clangd` binary.
         extraPackages = with pkgs; [
-            nixfmt  # used by nixd for `:lua vim.lsp.buf.format()`
+            clang-tools
+            ty
+            ruff
+            nixd
+            nixfmt
         ];
+
+        # Plugins are added to nvim's runtimepath. Treesitter grammars come as
+        # separate derivations; `withPlugins` bundles only the ones we ask for
+        # so nvim never has to compile a parser at runtime.
+        plugins = with pkgs.vimPlugins; [
+            (nvim-treesitter.withPlugins (p: with p; [
+                c lua nix python vim vimdoc query
+            ]))
+
+            nvim-lspconfig
+            blink-cmp
+            telescope-nvim
+            plenary-nvim          # telescope dep
+            oil-nvim
+            gitsigns-nvim
+            which-key-nvim
+            nvim-web-devicons
+        ];
+
+        # `builtins.readFile` slurps the file at evaluation time, so its contents
+        # become a string baked into the generated init at rebuild. Editor gets
+        # full lua LSP on the file. Flake gotcha: `home/nvim/init.lua` must be
+        # `git add`ed for the flake to see it.
+        initLua = builtins.readFile ./nvim/init.lua;
     };
 
     programs.direnv = {
