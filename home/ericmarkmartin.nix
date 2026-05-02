@@ -13,8 +13,10 @@ in {
 
     home.packages = with pkgs; [
         ripgrep fd bat eza fzf jq gh claude-code
-        bear  # generates compile_commands.json for cpython: `bear -- make`
-        uv    # Python package/venv manager
+        bear     # generates compile_commands.json for cpython: `bear -- make`
+        gnumake  # `make` — needed for cpython's build
+        uv       # Python package/venv manager
+        jujutsu  # git-compatible VCS; `jj` binary
     ];
 
     programs.home-manager.enable = true;
@@ -68,6 +70,7 @@ in {
             ruff
             nixd
             nixfmt
+            lua-language-server  # lua_ls
         ];
 
         # Plugins are added to nvim's runtimepath. Treesitter grammars come as

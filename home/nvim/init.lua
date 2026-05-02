@@ -74,13 +74,31 @@ vim.lsp.config("*", {
     capabilities = require("blink.cmp").get_lsp_capabilities(),
 })
 
--- clangd, ruff, nixd: nvim-lspconfig ships default configs at lsp/<name>.lua
--- on the runtimepath, so `enable` is enough to wire them up.
-vim.lsp.enable({ "clangd", "ruff", "nixd" })
+-- clangd, ruff, nixd, lua_ls: nvim-lspconfig ships default configs at
+-- lsp/<name>.lua on the runtimepath, so `enable` is enough to wire them up.
+vim.lsp.enable({ "clangd", "ruff", "nixd", "lua_ls" })
 
 -- nixd needs a custom formatter setting on top of the default config.
 vim.lsp.config("nixd", {
     settings = { nixd = { formatting = { command = { "nixfmt" } } } },
+})
+
+-- lua_ls: teach it about neovim's lua API so editing this file (or any
+-- nvim plugin lua) gets `vim.X` completion + no "undefined global" warnings.
+-- `nvim_get_runtime_file("", true)` returns every dir on the rtp; lua_ls
+-- treats those as library sources.
+vim.lsp.config("lua_ls", {
+    settings = {
+        Lua = {
+            runtime    = { version = "LuaJIT" },
+            workspace  = {
+                library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false,
+            },
+            diagnostics = { globals = { "vim" } },
+            telemetry  = { enable = false },
+        },
+    },
 })
 
 -- ty is alpha and isn't in nvim-lspconfig yet, so we define the config from
