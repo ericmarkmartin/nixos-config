@@ -27,6 +27,8 @@ in {
         PAGER  = "bat";
     };
 
+    home.sessionPath = [ "$HOME/.codex/packages/standalone/current/bin" ];
+
     programs.home-manager.enable = true;
 
     programs.git = {
@@ -63,6 +65,17 @@ in {
             ll = "eza -la --git";
         };
         initContent = ''
+            # Keep vi mode (zsh auto-selects it because EDITOR=nvim), but add
+            # the common emacs line-nav keys in insert mode so typing flow
+            # isn't crippled. Normal mode (Esc) is untouched.
+            bindkey -v
+            bindkey -M viins '^A' beginning-of-line
+            bindkey -M viins '^E' end-of-line
+            bindkey -M viins '^K' kill-line
+            bindkey -M viins '^U' backward-kill-line
+            bindkey -M viins '^W' backward-kill-word
+            bindkey -M viins '^R' history-incremental-search-backward
+
             # zimfw/git aliases (G-prefix: Gws, Gb, Gc, ...)
             fpath+=(${zimfwGit}/functions)
             for f in ${zimfwGit}/functions/*(N); do autoload -Uz ''${f:t}; done
