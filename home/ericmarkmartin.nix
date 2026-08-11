@@ -16,6 +16,7 @@ in {
         bear     # generates compile_commands.json for cpython: `bear -- make`
         gnumake  # `make` — needed for cpython's build
         uv       # Python package/venv manager
+        rocq-core
     ];
 
     # `home.sessionVariables` writes to ~/.profile (and home-manager's
