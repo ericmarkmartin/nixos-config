@@ -26,6 +26,7 @@ in {
         bear     # generates compile_commands.json for cpython: `bear -- make`
         gnumake  # `make` — needed for cpython's build
         uv       # Python package/venv manager
+        lean4
         rocq-core
     ];
 
@@ -97,6 +98,48 @@ in {
         '';
     };
 
+    programs.tmux = {
+        enable = true;
+        baseIndex = 1;
+        clock24 = true;
+        customPaneNavigationAndResize = true;
+        escapeTime = 0;
+        focusEvents = true;
+        historyLimit = 100000;
+        keyMode = "vi";
+        mouse = true;
+        sensibleOnTop = true;
+        terminal = "tmux-256color";
+
+        plugins = [
+            {
+                plugin = pkgs.tmuxPlugins.catppuccin;
+                extraConfig = ''
+                    # Match Neovim's Catppuccin flavour.
+                    set -g @catppuccin_flavor "macchiato"
+                    set -g @catppuccin_window_status_style "rounded"
+                '';
+            }
+        ];
+
+        extraConfig = ''
+            set -g renumber-windows on
+            set -as terminal-features ",xterm-256color:RGB"
+
+            # New windows and splits inherit the current pane's directory.
+            bind c new-window -c "#{pane_current_path}"
+            bind | split-window -h -c "#{pane_current_path}"
+            bind - split-window -v -c "#{pane_current_path}"
+
+            # Keep the Catppuccin status line useful without extra system
+            # monitoring plugins: current directory and session name.
+            set -g status-left ""
+            set -g status-right-length 100
+            set -g status-right "#{E:@catppuccin_status_directory}"
+            set -ag status-right "#{E:@catppuccin_status_session}"
+        '';
+    };
+
     programs.neovim = {
         enable = true;
         defaultEditor = true;
@@ -120,6 +163,7 @@ in {
             nixd
             nixfmt
             lua-language-server  # lua_ls
+            lean4
             rocqPackages.vsrocq-language-server
         ];
 
@@ -141,6 +185,7 @@ in {
             nvim-web-devicons
             catppuccin-nvim
             neogit
+            lean-nvim           # Lean 4 LSP, infoview, and abbreviations
             Coqtail              # Rocq filetype, syntax, and indentation
             vsrocqNvim           # goals, proof navigation, and VsRocq LSP
         ];

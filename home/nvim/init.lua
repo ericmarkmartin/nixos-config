@@ -1,5 +1,6 @@
 -- Leader must be set before plugins load
 vim.g.mapleader = " "
+vim.g.maplocalleader = ","
 
 -- Coqtail supplies Rocq's filetype detection, syntax, and indentation. Its
 -- proof engine uses the legacy XML protocol, so leave that disabled in favor
@@ -166,6 +167,17 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- A "*" config sets defaults that merge into every server.
 vim.lsp.config("*", {
     capabilities = require("blink.cmp").get_lsp_capabilities(),
+})
+
+-- Lean 4: lean.nvim starts Lean's bundled language server and provides the
+-- interactive infoview, Unicode abbreviations, diagnostics, and proof-state
+-- commands. Its suggested buffer-local mappings use `<LocalLeader>` (comma).
+require("lean").setup({
+    mappings = true,
+    infoview = { autoopen = true },
+    -- Windows Terminal does not implement Kitty's graphics protocol. Keep
+    -- Lean's textual widgets enabled without probing for image support.
+    graphics = { enabled = false },
 })
 
 -- VsRocq: continuous proof checking plus goal/query panels. Coqtail above
