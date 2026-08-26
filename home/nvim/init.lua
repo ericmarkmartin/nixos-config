@@ -1,6 +1,12 @@
 -- Leader must be set before plugins load
 vim.g.mapleader = " "
 
+-- Coqtail supplies Rocq's filetype detection, syntax, and indentation. Its
+-- proof engine uses the legacy XML protocol, so leave that disabled in favor
+-- of the VsRocq language server configured below.
+vim.g.loaded_coqtail = 1
+vim.g["coqtail#supported"] = 0
+
 local opt = vim.opt
 opt.number         = true
 opt.relativenumber = true
@@ -160,6 +166,40 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- A "*" config sets defaults that merge into every server.
 vim.lsp.config("*", {
     capabilities = require("blink.cmp").get_lsp_capabilities(),
+})
+
+-- VsRocq: continuous proof checking plus goal/query panels. Coqtail above
+-- provides the `coq` filetype and syntax; this client handles the modern LSP
+-- protocol and its Rocq-specific proof navigation requests.
+require("vsrocq").setup({
+    vsrocq = {
+        goals = {
+            diff = { mode = "on" },
+            messages = { full = true },
+        },
+        proof = {
+            mode = "Continuous",
+            cursor = { sticky = false },
+        },
+        completion = { enable = true },
+    },
+    lsp = {
+        on_attach = function(_, bufnr)
+            local map = function(lhs, command, desc)
+                vim.keymap.set("n", lhs, "<cmd>VsRocq " .. command .. "<cr>", {
+                    buffer = bufnr,
+                    desc = desc,
+                })
+            end
+            map("<leader>cj", "stepForward",      "Rocq: step forward")
+            map("<leader>ck", "stepBackward",     "Rocq: step backward")
+            map("<leader>cl", "interpretToPoint", "Rocq: check to cursor")
+            map("<leader>cG", "interpretToEnd",   "Rocq: check to end")
+            map("<leader>cr", "panels",           "Rocq: restore panels")
+            map("<leader>cm", "manual",           "Rocq: manual mode")
+            map("<leader>cC", "continuous",       "Rocq: continuous mode")
+        end,
+    },
 })
 
 -- clangd, ruff, nixd, lua_ls: nvim-lspconfig ships default configs at

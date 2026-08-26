@@ -6,6 +6,16 @@ let
         rev = "fff448c0b89a4885f4ace90e2f37893a078b0c8a";
         hash = "sha256-ojcv6nCOcv+2bbOZxcWhiefQ6mIWovYV57K8V6iyO5M=";
     };
+    vsrocqNvim = pkgs.vimUtils.buildVimPlugin {
+        pname = "vsrocq.nvim";
+        version = "unstable-2025-11-08";
+        src = pkgs.fetchFromGitHub {
+            owner = "tomtomjhj";
+            repo = "vsrocq.nvim";
+            rev = "dfa0e5a9e6b9fbd065fc6d9e1ec53e28f3dc11c5";
+            hash = "sha256-2Hyzuc8ovNloUCrRn54EHN7DgKceNzSuMBVhOZtFHI8=";
+        };
+    };
 in {
     home.username = "ericmarkmartin";
     home.homeDirectory = "/home/ericmarkmartin";
@@ -110,6 +120,7 @@ in {
             nixd
             nixfmt
             lua-language-server  # lua_ls
+            rocqPackages.vsrocq-language-server
         ];
 
         # Plugins are added to nvim's runtimepath. Treesitter grammars come as
@@ -130,6 +141,8 @@ in {
             nvim-web-devicons
             catppuccin-nvim
             neogit
+            Coqtail              # Rocq filetype, syntax, and indentation
+            vsrocqNvim           # goals, proof navigation, and VsRocq LSP
         ];
 
         # `builtins.readFile` slurps the file at evaluation time, so its contents
