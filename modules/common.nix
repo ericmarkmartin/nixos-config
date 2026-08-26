@@ -1,6 +1,6 @@
 { pkgs, lib, ... }: {
     environment.systemPackages = with pkgs; [
-        git curl wget
+        git curl wget bubblewrap rmux nodejs
     ];
 
     # allow running non-Nix binaries (e.g. uv-installed Pythons)
@@ -18,6 +18,8 @@
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+    services.tailscale.enable = true;
 
     nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
         "claude-code"

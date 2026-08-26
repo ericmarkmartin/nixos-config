@@ -28,7 +28,10 @@ in {
         PAGER  = "bat";
     };
 
-    home.sessionPath = [ "$HOME/.codex/packages/standalone/current/bin" ];
+    # Codex's standalone installer maintains a stable launcher here. Keep the
+    # installer-managed release directory out of PATH so updates don't mistake
+    # the current standalone binary for a competing npm installation.
+    home.sessionPath = [ "$HOME/.local/bin" ];
 
     programs.home-manager.enable = true;
 
@@ -147,26 +150,24 @@ in {
         enable = true;
         enableDefaultConfig = false;
 
-        matchBlocks = {
+        settings = {
             "github.com" = {
-                identityFile = "~/.ssh/id_github";
-                extraOptions.AddKeysToAgent = "yes";
+                IdentityFile = "~/.ssh/id_github";
+                AddKeysToAgent = "yes";
             };
             "*" = {
-                forwardAgent = false;
-                serverAliveInterval = 0;
-                serverAliveCountMax = 3;
-                compression = false;
-                addKeysToAgent = "no";
-                hashKnownHosts = false;
-                userKnownHostsFile = "~/.ssh/known_hosts";
-                controlMaster = "no";
-                controlPath = "~/.ssh/master-%r@%n:%p";
-                controlPersist = "no";
+                ForwardAgent = false;
+                ServerAliveInterval = 0;
+                ServerAliveCountMax = 3;
+                Compression = false;
+                AddKeysToAgent = "no";
+                HashKnownHosts = false;
+                UserKnownHostsFile = "~/.ssh/known_hosts";
+                ControlMaster = "no";
+                ControlPath = "~/.ssh/master-%r@%n:%p";
+                ControlPersist = "no";
             };
         };
-
-
     };
 
     programs.starship = {
